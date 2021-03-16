@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameOver.cpp" />
+    <ClCompile Include="Highscore.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Tetris.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameOver.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="Highscore.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="olcPixelGameEngine.h" />
     <ClInclude Include="Tetris.h" />

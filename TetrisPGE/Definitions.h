@@ -27,5 +27,10 @@ enum class Screen {
 	/// <summary>
 	/// Show the highscore
 	/// </summary>
-	Highscore
+	Highscore,
+
+	/// <summary>
+	/// Stop execution
+	/// </summary>
+	Exit
 };

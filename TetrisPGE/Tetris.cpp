@@ -5,18 +5,15 @@ Tetris::Tetris(olc::PixelGameEngine* engine, GameState* gameState) {
 	this->engine = engine;
 	this->globalState = gameState;
 
-	ui.field.pos.x = 1;
-	ui.field.pos.y = 0;
+	ui.field.pos.x = ui.fieldOffset.x + 1;
+	ui.field.pos.y = ui.fieldOffset.y;
 	ui.field.size.x = ui.columns * ui.blockSize;
 	ui.field.size.y = ui.rows * ui.blockSize;
 
 	state.field = new unsigned int[ui.columns * ui.rows];
 
-	ui.scorePosition = { ui.field.size.x + 3, 0 };
-	ui.posNextPiece = { ui.field.size.x + 3, 10 };
-
-	ui.posFeena.x = ui.field.size.x + 3;
-	ui.posFeena.y = 70;
+	ui.posNextPiece = { ui.field.pos.x + ui.field.size.x + 3, ui.fieldOffset.y };
+	ui.scorePosition = { ui.field.pos.x + ui.field.size.x + 3, ui.fieldOffset.y + 68 };
 
 	// Color Table
 	ui.colorTable[0] = 0XFFD9C725;
@@ -35,36 +32,44 @@ Tetris::~Tetris() {
 
 // called if the users starts a new game
 void Tetris::Init() {
+	// Create all Layers;
+	ui.gameLayer = engine->CreateLayer();
+	ui.uiElementsLayer = engine->CreateLayer();
+}
+
+void Tetris::Show() {
 	if (!bgInitialized) {
-		ui.gameLayer = engine->CreateLayer();
-		ui.bgLayer = engine->CreateLayer();
-		engine->SetDrawTarget(ui.bgLayer);
-
+		engine->SetDrawTarget(ui.uiElementsLayer);
+		engine->Clear(olc::BLANK);
+		
 		// Setup the field border
-		engine->FillRect(0, ui.field.pos.y, ui.borderWidth, ui.field.size.y + 1, ui.borderColor); // Left Border
-		engine->FillRect(ui.field.size.x, 0, ui.borderWidth, ui.field.size.y, ui.borderColor); // Right Border
-		engine->FillRect(0, ui.field.size.y, ui.field.size.x + 1, 1, ui.borderColor); // Bottom Border
-
+		engine->DrawRect(ui.field.pos, ui.field.size, ui.borderColor);
+		
 		// Border for next piece box
-		engine->DrawRect(ui.posNextPiece.x, ui.posNextPiece.y, 40, 40, ui.borderColor);
+		engine->DrawRect(ui.posNextPiece.x, ui.posNextPiece.y, 60, 60, ui.borderColor);
 		ui.posNextPiece.x += 2;
 		ui.posNextPiece.y += 2;
 
 		for (auto i = 1; i < 12; i++) {
-			engine->DrawLine(i * ui.blockSize, 0, i * ui.blockSize, ui.field.size.y, ui.borderColor);
+			engine->DrawLine(
+				ui.field.pos.x + i * ui.blockSize,
+				ui.field.pos.y, 
+				ui.field.pos.x + i * ui.blockSize, 
+				ui.field.pos.y + ui.field.size.y, 
+				ui.borderColor);
 		}
 
-		engine->DrawString(ui.scorePosition, "Score: ");
-		ui.scorePosition.x += engine->GetTextSize("Score: ").x;
+		engine->DrawString(ui.scorePosition, "Score: ", olc::WHITE, 2);
+		ui.scorePosition.x += engine->GetTextSize("Score: ").x*2;
+		bgInitialized = true;
 
 		engine->SetDrawTarget(nullptr);
-		bgInitialized = true;
 	}
 
 	state.gameSpeed = 0.5f;
 	state.pieceCount = 0;
-	engine->EnableLayer(ui.bgLayer, true);
 	engine->EnableLayer(ui.gameLayer, true);
+	engine->EnableLayer(ui.uiElementsLayer, true);
 	globalState->score = 0;
 	memset(&state.field[0], 0, sizeof(state.field) * ui.columns * ui.rows);
 	engine->Clear(olc::BLANK);
@@ -74,8 +79,8 @@ void Tetris::Hide() {
 	engine->SetDrawTarget(ui.gameLayer);
 	engine->Clear(olc::BLANK);
 	engine->SetDrawTarget(nullptr);
-	engine->EnableLayer(ui.bgLayer, false);
 	engine->EnableLayer(ui.gameLayer, false);
+	engine->EnableLayer(ui.uiElementsLayer, false);
 }
 
 Screen Tetris::OnUserUpdate(float fElapsedTime) {
@@ -190,6 +195,7 @@ Screen Tetris::OnUserUpdate(float fElapsedTime) {
 
 	if (state.changed) {
 		engine->SetDrawTarget(ui.gameLayer);
+		engine->Clear(olc::BLANK);
 		if (!state.lines.empty())
 		{
 			for (auto& v : state.lines)
@@ -209,23 +215,25 @@ Screen Tetris::OnUserUpdate(float fElapsedTime) {
 		for (int px = 0; px < 4; px++)
 			for (int py = 0; py < 4; py++)
 				if (tetrominos[state.currentPiece->index][Rotate(px, py, state.currentPiece->rotation)] != L'.')
-					engine->FillRect(state.currentPiece->x * ui.blockSize + (px * ui.blockSize),
-						state.currentPiece->y * ui.blockSize + (py * ui.blockSize),
+					engine->FillRect(
+						ui.field.pos.x + state.currentPiece->x * ui.blockSize + (px * ui.blockSize),
+						ui.field.pos.y + state.currentPiece->y * ui.blockSize + (py * ui.blockSize),
 						ui.blockSize,
-						ui.blockSize, ui.colorTable[state.currentPiece->color]);
+						ui.blockSize, 
+						ui.colorTable[state.currentPiece->color]);
 
 		// Draw field
 		for (int x = 0; x < ui.columns; x++) {
 			for (int y = 0; y < ui.rows; y++) {
 				if (state.field[y * ui.columns + x] > 0) {
-					engine->FillRect(x * ui.blockSize, y * ui.blockSize, ui.blockSize, ui.blockSize, state.field[y * ui.columns + x]);
+					engine->FillRect(ui.field.pos.x + x * ui.blockSize, ui.field.pos.y + y * ui.blockSize, ui.blockSize, ui.blockSize, state.field[y * ui.columns + x]);
 				}
 			}
 		}
 
 		// Draw Score
 		snprintf(ui.scoreString, 10, "%d", globalState->score);
-		engine->DrawString(ui.scorePosition, ui.scoreString, olc::WHITE);
+		engine->DrawString(ui.scorePosition, ui.scoreString, olc::WHITE, 2);
 		DrawNextPiece();
 	}
 	
@@ -244,7 +252,12 @@ void Tetris::DrawNextPiece() {
 	for (int px = 0; px < 4; px++)
 		for (int py = 0; py < 4; py++)
 			if (tetrominos[state.nextPiece->index][py * 4 + px] != L'.')
-				engine->FillRect(ui.posNextPiece.x + (px * 8), ui.posNextPiece.y + (py * 8), 8, 8, ui.colorTable[state.nextPiece->color]);
+				engine->FillRect(
+					ui.posNextPiece.x + (px * ui.nextPieceBlockSize),
+					ui.posNextPiece.y + (py * ui.nextPieceBlockSize), 
+					ui.nextPieceBlockSize,
+					ui.nextPieceBlockSize,
+					ui.colorTable[state.nextPiece->color]);
 }
 
 int Tetris::Rotate(int px, int py, int r)

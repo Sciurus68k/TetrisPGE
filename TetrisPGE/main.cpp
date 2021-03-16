@@ -4,7 +4,7 @@
 int main()
 {
 	Game game;
-	if (game.Construct(256, 240, 2, 2))
+	if (game.Construct(800, 800, 1, 1))
 		game.Start();
 	return 0;
 }

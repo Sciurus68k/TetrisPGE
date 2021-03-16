@@ -4,17 +4,14 @@
 #include "Definitions.h"
 #include "GameState.h"
 
-/// <summary>
-/// Implementation of the menu
-/// </summary>
-class Menu
+class Highscore
 {
 private:
 	olc::PixelGameEngine* engine;
 	GameState* globalState;
 
 public:
-	Menu(olc::PixelGameEngine* engine, GameState* gameState);
+	Highscore(olc::PixelGameEngine* engine, GameState* gameState);
 	void Init();
 	Screen OnUserUpdate(float fElapsedTime);
 	void Show();
