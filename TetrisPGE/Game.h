@@ -19,9 +19,8 @@ private:
 	
 	int bgLayer;
 	const olc::vi2d bgPos = { 0,0 };
-	std::unique_ptr<olc::Sprite> bgSprite;
-	std::unique_ptr<olc::Decal> bgDecal;
-
+	olc::Renderable bgRenderable;
+	
 public:
 	Game();
 	~Game();

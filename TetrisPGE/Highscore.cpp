@@ -1,4 +1,6 @@
+#include <fstream>
 #include "Highscore.h"
+
 
 Highscore::Highscore(olc::PixelGameEngine* engine, GameState* gameState) {
 	this->engine = engine;
@@ -9,18 +11,17 @@ void Highscore::Init() {
 }
 
 void Highscore::Show() {
+	globalState->highscoreManager.Load();
 	engine->Clear(olc::BLANK);
-	engine->DrawString(200, 80, "Highscore!", olc::WHITE, 2);
-	engine->DrawString(200, 100, "1 - 1000", olc::WHITE, 2);
-	engine->DrawString(200, 120, "2 - 1000", olc::WHITE, 2);
-	engine->DrawString(200, 140, "3 - 1000", olc::WHITE, 2);
-	engine->DrawString(200, 160, "4 - 1000", olc::WHITE, 2);
-	engine->DrawString(200, 180, "5 - 1000", olc::WHITE, 2);
-	engine->DrawString(200, 200, "6 - 1000", olc::WHITE, 2);
-	engine->DrawString(200, 220, "7 - 1000", olc::WHITE, 2);
-	engine->DrawString(200, 240, "8 - 1000", olc::WHITE, 2);
-	engine->DrawString(200, 260, "9 - 1000", olc::WHITE, 2);
-	engine->DrawString(200, 280, "10 - 1000", olc::WHITE, 2);
+	engine->DrawString(100, 40, "Highscore!", olc::WHITE);
+	
+	char formatString[100];
+	int yOffset = 50;
+	for (int i = 0; i < 10; i++) {
+		snprintf(formatString, 100, "%s - %d", globalState->highscoreManager.scores[i].name.c_str(), globalState->highscoreManager.scores[i].score);
+		engine->DrawString(100, yOffset, formatString, olc::WHITE);
+		yOffset += 10;
+	}
 
 }
 

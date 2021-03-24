@@ -16,17 +16,24 @@ void GameOver::Init() {
 }
 
 void GameOver::Show() {
+	globalState->highscoreManager.Load();
 	engine->Clear(olc::BLANK);
 	engine->SetDrawTarget(staticTextLayer);
 	engine->Clear(olc::BLANK);
-	engine->DrawString(200, 80, "GameOver!", olc::WHITE, 2);
-	engine->DrawString(200, 100, "Score: ", olc::WHITE, 2);
+	engine->DrawString(100, 40, "GameOver!", olc::WHITE);
+	engine->DrawString(100, 50, "Score: ", olc::WHITE);
 	
 	char score[10];
 	snprintf(score, 10, "%d", globalState->score);
-	engine->DrawString(200, 120, score, olc::WHITE, 2);
+	engine->DrawString(100, 60, score, olc::WHITE);
 
-	engine->DrawString(80, 140, "Enter your name and press Enter to continue", olc::WHITE, 2);
+	isInList = globalState->highscoreManager.IsInList(globalState->score);
+	if (isInList) {
+		engine->DrawString(40, 70, "Enter your name and press Enter to continue", olc::WHITE);
+	}
+	else {
+		engine->DrawString(40, 70, "Press Enter to return to the Menu", olc::WHITE);
+	}
 	engine->EnableLayer(staticTextLayer, true);
 	engine->SetDrawTarget(nullptr);
 }
@@ -39,10 +46,14 @@ void GameOver::Hide() {
 Screen GameOver::OnUserUpdate(float fElapsedTime) {
 	nameChanged = false;
 	if (engine->GetKey(olc::Key::ENTER).bPressed) {
-		// Save highscore
+		if (isInList) {
+			globalState->highscoreManager.AddScore(name, globalState->score);
+		}
 		return Screen::Menu;
 	}
 	
+	if (!isInList) return Screen::GameOver;
+
 	// Check Key Press only if space for the name is left
 	if (nameIdx >= 0 && nameIdx < 8) {
 		if (engine->GetKey(olc::Key::A).bPressed) {
@@ -187,7 +198,7 @@ Screen GameOver::OnUserUpdate(float fElapsedTime) {
 
 	if (nameChanged) {
 		engine->Clear(olc::BLANK);
-		engine->DrawString(200, 160, name, olc::WHITE, 2);
+		engine->DrawString(100, 80, name, olc::WHITE);
 	}
 
 	return Screen::GameOver;

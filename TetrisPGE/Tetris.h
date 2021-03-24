@@ -77,10 +77,10 @@ struct Ui {
 	int rows = 18;
 	int borderWidth = 1;
 	olc::Pixel borderColor = 0xFFA68E24;
-	int blockSize = 33;
-	olc::vi2d fieldOffset = { 175, 103 };
+	int blockSize = 16;
+	olc::vi2d fieldOffset = { 87, 51 };
 	int colorTable[4];
-	int nextPieceBlockSize = 12;
+	int nextPieceBlockSize = 6;
 
 };
 

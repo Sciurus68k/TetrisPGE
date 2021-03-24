@@ -16,6 +16,8 @@ Game::~Game() {
 
 bool Game::OnUserCreate()
 {
+	srand(time(0)); // Better than having always the same sequence
+
 	// Initialize everything
 	gameState = new GameState();
 	menu = new Menu(this, gameState);
@@ -29,8 +31,9 @@ bool Game::OnUserCreate()
 	gameOver->Init();
 	highscore->Init();
 
-	bgSprite = std::make_unique<olc::Sprite>("assets/backgroundCastles.png");
-	bgDecal = std::make_unique<olc::Decal>(bgSprite.get());
+	bgRenderable.Load("./assets/backgroundCastles.png");
+	
+	//bgDecal = std::make_unique<olc::Decal>(bgSprite.get());
 	
 	Clear(olc::BLANK);
 	gameState->debugLayer = CreateLayer();
@@ -112,8 +115,9 @@ bool Game::OnUserUpdate(float fElapsedTime)
 	if (nextScreen != currentScreen) {
 		SwitchScreen(nextScreen);
 	}
+
 	SetDrawTarget(bgLayer);
-	DrawDecal(bgPos, bgDecal.get());
+	DrawDecal(bgPos, bgRenderable.Decal(), { 0.5f, 0.5f });
 	SetDrawTarget(nullptr);
 	return true;
 }

@@ -16,7 +16,7 @@ private:
 	char name[9];
 	bool nameChanged = false;
 	int staticTextLayer = 0;
-
+	bool isInList = false;
 public:
 	GameOver(olc::PixelGameEngine* engine, GameState* gameState);
 	void Init();

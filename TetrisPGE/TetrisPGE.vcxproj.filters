@@ -62,5 +62,11 @@
     <ClInclude Include="Highscore.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="HighscoreManager.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

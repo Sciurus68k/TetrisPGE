@@ -154,10 +154,14 @@
     <ClInclude Include="GameOver.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Highscore.h" />
+    <ClInclude Include="HighscoreManager.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="olcPixelGameEngine.h" />
     <ClInclude Include="Tetris.h" />
     <ClInclude Include="Tetrominos.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

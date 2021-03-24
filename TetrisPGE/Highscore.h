@@ -4,6 +4,7 @@
 #include "Definitions.h"
 #include "GameState.h"
 
+
 class Highscore
 {
 private:

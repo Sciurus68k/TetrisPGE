@@ -5,7 +5,7 @@ Tetris::Tetris(olc::PixelGameEngine* engine, GameState* gameState) {
 	this->engine = engine;
 	this->globalState = gameState;
 
-	ui.field.pos.x = ui.fieldOffset.x + 1;
+	ui.field.pos.x = ui.fieldOffset.x + ui.borderWidth;
 	ui.field.pos.y = ui.fieldOffset.y;
 	ui.field.size.x = ui.columns * ui.blockSize;
 	ui.field.size.y = ui.rows * ui.blockSize;
@@ -46,11 +46,11 @@ void Tetris::Show() {
 		engine->DrawRect(ui.field.pos, ui.field.size, ui.borderColor);
 		
 		// Border for next piece box
-		engine->DrawRect(ui.posNextPiece.x, ui.posNextPiece.y, 60, 60, ui.borderColor);
+		engine->DrawRect(ui.posNextPiece.x, ui.posNextPiece.y, 30, 30, ui.borderColor);
 		ui.posNextPiece.x += 2;
 		ui.posNextPiece.y += 2;
 
-		for (auto i = 1; i < 12; i++) {
+		for (auto i = 1; i < ui.columns; i++) {
 			engine->DrawLine(
 				ui.field.pos.x + i * ui.blockSize,
 				ui.field.pos.y, 
@@ -59,8 +59,8 @@ void Tetris::Show() {
 				ui.borderColor);
 		}
 
-		engine->DrawString(ui.scorePosition, "Score: ", olc::WHITE, 2);
-		ui.scorePosition.x += engine->GetTextSize("Score: ").x*2;
+		engine->DrawString(ui.scorePosition, "Score: ", olc::WHITE);
+		ui.scorePosition.x += engine->GetTextSize("Score: ").x;
 		bgInitialized = true;
 
 		engine->SetDrawTarget(nullptr);
@@ -233,7 +233,7 @@ Screen Tetris::OnUserUpdate(float fElapsedTime) {
 
 		// Draw Score
 		snprintf(ui.scoreString, 10, "%d", globalState->score);
-		engine->DrawString(ui.scorePosition, ui.scoreString, olc::WHITE, 2);
+		engine->DrawString(ui.scorePosition, ui.scoreString, olc::WHITE);
 		DrawNextPiece();
 	}
 	
@@ -241,7 +241,7 @@ Screen Tetris::OnUserUpdate(float fElapsedTime) {
 		engine->SetDrawTarget(globalState->debugLayer);
 		engine->Clear(olc::BLANK);
 		snprintf(ui.debugInfo, 255, "Pieces: %d, Speed: %f", state.pieceCount, state.gameSpeed);
-		engine->DrawString(0, 180, ui.debugInfo);
+		engine->DrawString(5, 380, ui.debugInfo);
 	}
 
 	engine->SetDrawTarget(nullptr);
